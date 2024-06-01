@@ -4,44 +4,17 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"strconv"
-	"strings"
+    "strings"
 )
 
-func exitCommand(args string) {
-	exitCode, _ := strconv.Atoi(args)
-	os.Exit(exitCode)
-}
+var pathDirectories []string
 
-func echoCommand(args string) {
-	fmt.Println(args)
-}
-
-func typeCommand(args string) {
-	if _, ok := BuiltInHandlers[args]; ok {
-		fmt.Printf("%s is a shell builtin\n", args)
-	} else {
-		fmt.Printf("%s not found\n", args)
-	}
-}
-
-var BuiltInHandlers map[string]func(string)
-
-func handleCommand(command string, args string) {
-	if handler, ok := BuiltInHandlers[command]; ok {
-		handler(args)
-		return
-	}
-
-	fmt.Printf("%s: command not found\n", command)
+func handleCommand(command string, args string) (ok bool) {
+    return handleBuiltIn(command, args)
 }
 
 func init() {
-	BuiltInHandlers = map[string]func(string){
-		"exit": exitCommand,
-		"echo": echoCommand,
-		"type": typeCommand,
-	}
+    pathDirectories = strings.Split(os.Getenv("PATH"), ":")
 }
 
 func main() {
@@ -56,6 +29,9 @@ func main() {
 
 		command, args, _ := strings.Cut(input, " ")
 
-		handleCommand(strings.Trim(command, "\n"), strings.Trim(args, "\n"))
+        handled := handleCommand(strings.Trim(command, "\n"), strings.Trim(args, "\n"))
+        if (!handled) {
+            fmt.Printf("%s: command not found\n", command)
+        }
 	}
 }
