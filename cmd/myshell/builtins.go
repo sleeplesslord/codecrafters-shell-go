@@ -13,6 +13,7 @@ func init() {
 		"exit": exitCommand,
 		"echo": echoCommand,
 		"type": typeCommand,
+        "pwd": pwdCommand,
 	}
 }
 
@@ -32,6 +33,10 @@ func exitCommand(args string) {
 
 func echoCommand(args string) {
 	fmt.Println(args)
+}
+
+func pwdCommand(_ string) {
+    fmt.Println(os.Getenv("PWD"))
 }
 
 func typeCommand(args string) {
