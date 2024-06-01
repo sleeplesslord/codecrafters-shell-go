@@ -4,13 +4,31 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"os/exec"
 	"strings"
 )
 
 var pathDirectories []string
 
 func handleCommand(command string, args string) (ok bool) {
-	return handleBuiltIn(command, args)
+	ok = handleBuiltIn(command, args)
+	if ok {
+		return
+	}
+
+	return handleExternalCommand(command, args)
+}
+
+func handleExternalCommand(command string, args string) (ok bool) {
+	if path, found := fileInPathVariables(command); found {
+		execPath := fmt.Sprintf("%s/%s", path, command)
+		cmd := exec.Command(execPath, args)
+		output, _ := cmd.Output()
+		fmt.Printf("%s", output)
+		return true
+	}
+
+	return false
 }
 
 func fileInPath(path string, command string) (found bool) {
@@ -53,7 +71,7 @@ func main() {
 		input, _ := bufio.NewReader(os.Stdin).ReadString('\n')
 
 		command, args, _ := strings.Cut(input, " ")
-        command = strings.Trim(command, "\n")
+		command = strings.Trim(command, "\n")
 
 		handled := handleCommand(command, strings.Trim(args, "\n"))
 		if !handled {
