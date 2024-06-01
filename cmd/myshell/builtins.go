@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"strconv"
@@ -13,7 +14,8 @@ func init() {
 		"exit": exitCommand,
 		"echo": echoCommand,
 		"type": typeCommand,
-        "pwd": pwdCommand,
+		"pwd":  pwdCommand,
+		"cd":   cdCommand,
 	}
 }
 
@@ -36,7 +38,15 @@ func echoCommand(args string) {
 }
 
 func pwdCommand(_ string) {
-    fmt.Println(os.Getenv("PWD"))
+	fmt.Println(os.Getenv("PWD"))
+}
+
+func cdCommand(args string) {
+	if _, err := os.Stat(args); errors.Is(err, os.ErrNotExist) {
+		fmt.Printf("cd: %s: No such file or directory\n", args)
+		return
+	}
+	os.Setenv("PWD", args)
 }
 
 func typeCommand(args string) {
