@@ -20,15 +20,24 @@ func handleCommand(command string, args string) (ok bool) {
 }
 
 func handleExternalCommand(command string, args string) (ok bool) {
-	if path, found := fileInPathVariables(command); found {
-		execPath := fmt.Sprintf("%s/%s", path, command)
-		cmd := exec.Command(execPath, args)
-		output, _ := cmd.Output()
-		fmt.Printf("%s", output)
-		return true
+	isAbsolute := command[0] == '/' || command[0] == '.'
+	var commandPath string
+	var runnable bool
+
+	if isAbsolute {
+		commandPath = command
+		runnable = true
 	}
 
-	return false
+	if path, found := fileInPathVariables(command); found {
+		commandPath = fmt.Sprintf("%s/%s", path, command)
+		runnable = true
+	}
+
+	cmd := exec.Command(commandPath, args)
+	output, _ := cmd.Output()
+	fmt.Printf("%s", output)
+	return runnable
 }
 
 func fileInPath(path string, command string) (found bool) {
