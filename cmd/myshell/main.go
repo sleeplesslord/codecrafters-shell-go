@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
     "strings"
+    "strconv"
 )
 
 func main() {
@@ -16,6 +17,13 @@ func main() {
 
         // Wait for user input
         input, _ := bufio.NewReader(os.Stdin).ReadString('\n')
+
+        fields := strings.Fields(input)
+        if fields[0] == "exit" {
+            exitCode, _ := strconv.Atoi(fields[1])
+            os.Exit(exitCode)
+        }
+            
 
         fmt.Printf("%s: command not found\n", strings.Trim(input, "\n"))
     }
