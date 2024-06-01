@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strconv"
 )
 
@@ -42,11 +43,18 @@ func pwdCommand(_ string) {
 }
 
 func cdCommand(args string) {
-	if _, err := os.Stat(args); errors.Is(err, os.ErrNotExist) {
-		fmt.Printf("%s: No such file or directory\n", args)
+	targetPath := args
+
+	isAbsolute := targetPath[0] == '/'
+	if !isAbsolute {
+		targetPath = filepath.Join(os.Getenv("PWD"), targetPath)
+	}
+
+	if _, err := os.Stat(targetPath); errors.Is(err, os.ErrNotExist) {
+		fmt.Printf("%s: No such file or directory\n", targetPath)
 		return
 	}
-	os.Setenv("PWD", args)
+	os.Setenv("PWD", targetPath)
 }
 
 func typeCommand(args string) {
