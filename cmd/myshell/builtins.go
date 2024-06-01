@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 )
 
 var builtInHandlers map[string]func(string)
@@ -42,11 +43,26 @@ func pwdCommand(_ string) {
 	fmt.Println(os.Getenv("PWD"))
 }
 
-func cdCommand(args string) {
-	targetPath := args
+func determineHomePath(targetPath string) string {
+	topComponent, rest, found := strings.Cut(targetPath, "/")
 
+	if topComponent != "~" {
+		return targetPath
+	}
+
+	homePath := os.Getenv("HOME")
+	if !found {
+		return homePath
+	}
+
+	return filepath.Join(homePath, rest)
+}
+
+func cdCommand(targetPath string) {
 	if filepath.IsAbs(targetPath) {
 		targetPath = filepath.Join(os.Getenv("PWD"), targetPath)
+	} else {
+		targetPath = determineHomePath(targetPath)
 	}
 
 	if _, err := os.Stat(targetPath); errors.Is(err, os.ErrNotExist) {
