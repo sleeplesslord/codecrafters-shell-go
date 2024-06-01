@@ -53,8 +53,9 @@ func main() {
 		input, _ := bufio.NewReader(os.Stdin).ReadString('\n')
 
 		command, args, _ := strings.Cut(input, " ")
+        command = strings.Trim(command, "\n")
 
-		handled := handleCommand(strings.Trim(command, "\n"), strings.Trim(args, "\n"))
+		handled := handleCommand(command, strings.Trim(args, "\n"))
 		if !handled {
 			fmt.Printf("%s: command not found\n", command)
 		}
