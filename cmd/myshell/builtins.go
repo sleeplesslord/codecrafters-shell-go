@@ -59,7 +59,7 @@ func determineHomePath(targetPath string) string {
 }
 
 func cdCommand(targetPath string) {
-	if filepath.IsAbs(targetPath) {
+	if !filepath.IsAbs(targetPath) {
 		targetPath = filepath.Join(os.Getenv("PWD"), targetPath)
 	} else {
 		targetPath = determineHomePath(targetPath)
