@@ -30,7 +30,7 @@ func handleExternalCommand(command string, args string) (ok bool) {
 	}
 
 	if path, found := fileInPathVariables(command); found {
-		commandPath = fmt.Sprintf("%s/%s", path, command)
+		commandPath = filepath.Join(path, command)
 		runnable = true
 	}
 
