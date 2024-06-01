@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 )
 
@@ -20,11 +21,10 @@ func handleCommand(command string, args string) (ok bool) {
 }
 
 func handleExternalCommand(command string, args string) (ok bool) {
-	isAbsolute := command[0] == '/' || command[0] == '.'
 	var commandPath string
 	var runnable bool
 
-	if isAbsolute {
+	if filepath.IsAbs(command) {
 		commandPath = command
 		runnable = true
 	}

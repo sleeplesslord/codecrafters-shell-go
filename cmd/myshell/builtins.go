@@ -45,8 +45,7 @@ func pwdCommand(_ string) {
 func cdCommand(args string) {
 	targetPath := args
 
-	isAbsolute := targetPath[0] == '/'
-	if !isAbsolute {
+	if filepath.IsAbs(targetPath) {
 		targetPath = filepath.Join(os.Getenv("PWD"), targetPath)
 	}
 
