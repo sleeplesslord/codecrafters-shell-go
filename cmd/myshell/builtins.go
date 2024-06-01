@@ -43,27 +43,36 @@ func pwdCommand(_ string) {
 	fmt.Println(os.Getenv("PWD"))
 }
 
-func determineHomePath(targetPath string) string {
+func determineHomePath(targetPath string) (newPath string, mapped bool) {
 	topComponent, rest, found := strings.Cut(targetPath, "/")
 
 	if topComponent != "~" {
-		return targetPath
+		return targetPath, false
 	}
 
 	homePath := os.Getenv("HOME")
 	if !found {
-		return homePath
+		return homePath, true
 	}
 
-	return filepath.Join(homePath, rest)
+	return filepath.Join(homePath, rest), true
 }
 
-func cdCommand(targetPath string) {
-	if !filepath.IsAbs(targetPath) {
-		targetPath = filepath.Join(os.Getenv("PWD"), targetPath)
-	} else {
-		targetPath = determineHomePath(targetPath)
+func determinePath(args string) string {
+	if filepath.IsAbs(args) {
+		return args
 	}
+
+	mappedHomePath, isHome := determineHomePath(args)
+	if isHome {
+		return mappedHomePath
+	}
+
+	return filepath.Join(os.Getenv("PWD"), args)
+}
+
+func cdCommand(args string) {
+	targetPath := determinePath(args)
 
 	if _, err := os.Stat(targetPath); errors.Is(err, os.ErrNotExist) {
 		fmt.Printf("%s: No such file or directory\n", targetPath)
