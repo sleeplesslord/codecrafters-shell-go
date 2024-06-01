@@ -43,7 +43,7 @@ func pwdCommand(_ string) {
 
 func cdCommand(args string) {
 	if _, err := os.Stat(args); errors.Is(err, os.ErrNotExist) {
-		fmt.Printf("cd: %s: No such file or directory\n", args)
+		fmt.Printf("%s: No such file or directory\n", args)
 		return
 	}
 	os.Setenv("PWD", args)

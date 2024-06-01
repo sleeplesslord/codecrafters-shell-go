@@ -81,8 +81,9 @@ func main() {
 
 		command, args, _ := strings.Cut(input, " ")
 		command = strings.Trim(command, "\n")
+		args = strings.Trim(args, "\n")
 
-		handled := handleCommand(command, strings.Trim(args, "\n"))
+		handled := handleCommand(command, args)
 		if !handled {
 			fmt.Printf("%s: command not found\n", command)
 		}
