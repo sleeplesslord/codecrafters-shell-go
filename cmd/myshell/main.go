@@ -9,8 +9,6 @@ import (
 	"strings"
 )
 
-var pathDirectories []string
-
 func handleCommand(command string, args string) (ok bool) {
 	ok = handleBuiltIn(command, args)
 	if ok {
@@ -29,44 +27,15 @@ func handleExternalCommand(command string, args string) (ok bool) {
 		runnable = true
 	}
 
-	if path, found := fileInPathVariables(command); found {
+	if path, found := resolveFromPathVariable(command); found {
 		commandPath = filepath.Join(path, command)
 		runnable = true
 	}
 
-	cmd := exec.Command(commandPath, args)
-	output, _ := cmd.Output()
+	cmd := exec.Command(commandPath, strings.Fields(args)...)
+	output, _ := cmd.CombinedOutput()
 	fmt.Printf("%s", output)
 	return runnable
-}
-
-func fileInPath(path string, command string) (found bool) {
-	entries, err := os.ReadDir(path)
-	if err != nil {
-		return false
-	}
-
-	for _, e := range entries {
-		if e.Name() == command {
-			return true
-		}
-	}
-
-	return false
-}
-
-func fileInPathVariables(command string) (path string, found bool) {
-	for _, path := range pathDirectories {
-		if fileInPath(path, command) {
-			return path, true
-		}
-	}
-
-	return "", false
-}
-
-func init() {
-	pathDirectories = strings.Split(os.Getenv("PATH"), ":")
 }
 
 func main() {
