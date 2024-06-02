@@ -1,10 +1,10 @@
 package main
 
 import (
+	"errors"
 	"os"
 	"path/filepath"
 	"strings"
-    "errors"
 )
 
 func resolveHomePath(targetPath string) (newPath string, mapped bool) {
@@ -43,10 +43,10 @@ func findExecutableFile(command string) (path string, found bool) {
 			return commandPath, true
 		}
 
-        return "", false
+		return "", false
 	}
 
-    return commandPath, true
+	return commandPath, true
 }
 
 func findInDirectory(path string, command string) (found bool) {

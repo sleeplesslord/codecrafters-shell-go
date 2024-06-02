@@ -48,6 +48,8 @@ func cdCommand(args string) {
 		fmt.Printf("%s: No such file or directory\n", targetPath)
 		return
 	}
+
+	os.Chdir(targetPath)
 	os.Setenv("PWD", targetPath)
 }
 

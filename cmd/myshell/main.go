@@ -18,7 +18,7 @@ func handleCommand(command string, args string) (ok bool) {
 }
 
 func handleExternalCommand(command string, args string) (ok bool) {
-    commandPath, runnable := findExecutableFile(command)
+	commandPath, runnable := findExecutableFile(command)
 
 	if runnable {
 		cmd := exec.Command(commandPath, strings.Fields(args)...)
@@ -30,9 +30,6 @@ func handleExternalCommand(command string, args string) (ok bool) {
 }
 
 func main() {
-	// You can use print statements as follows for debugging, they'll be visible when running tests.
-	// fmt.Println("Logs from your program will appear here!")
-
 	for {
 		fmt.Fprint(os.Stdout, "$ ")
 
