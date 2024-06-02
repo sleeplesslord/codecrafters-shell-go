@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"path/filepath"
 	"strings"
 )
 
@@ -19,22 +18,14 @@ func handleCommand(command string, args string) (ok bool) {
 }
 
 func handleExternalCommand(command string, args string) (ok bool) {
-	var commandPath string
-	var runnable bool
+    commandPath, runnable := findExecutableFile(command)
 
-	if filepath.IsAbs(command) {
-		commandPath = command
-		runnable = true
+	if runnable {
+		cmd := exec.Command(commandPath, strings.Fields(args)...)
+		output, _ := cmd.CombinedOutput()
+		fmt.Printf("%s", output)
 	}
 
-	if path, found := resolveFromPathVariable(command); found {
-		commandPath = filepath.Join(path, command)
-		runnable = true
-	}
-
-	cmd := exec.Command(commandPath, strings.Fields(args)...)
-	output, _ := cmd.CombinedOutput()
-	fmt.Printf("%s", output)
 	return runnable
 }
 

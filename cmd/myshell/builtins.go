@@ -54,8 +54,8 @@ func cdCommand(args string) {
 func typeCommand(args string) {
 	if _, ok := builtInHandlers[args]; ok {
 		fmt.Printf("%s is a shell builtin\n", args)
-	} else if path, found := resolveFromPathVariable(args); found {
-		fmt.Printf("%s is %s/%s\n", args, path, args)
+	} else if path, found := findExecutableFile(args); found {
+		fmt.Printf("%s is %s\n", args, path)
 	} else {
 		fmt.Printf("%s not found\n", args)
 	}
